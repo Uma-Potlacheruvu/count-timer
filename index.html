@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #message {
+            font-size: 20px;
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Countdown Timer</h2>
+        <input type="datetime-local" id="datetimeInput">
+        <button onclick="startCountdown()">Start</button>
+        <div id="countdown">00d 00h 00m 00s</div>
+        <div id="message"></div>
+        <audio id="alarmSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+    </div>
+
+    <script>
+        let countdownInterval;
+
+        function startCountdown() {
+            clearInterval(countdownInterval);
+            document.getElementById('message').innerHTML = "";
+            
+            const input = document.getElementById('datetimeInput').value;
+            const targetTime = new Date(input).getTime();
+            const alarmSound = document.getElementById('alarmSound');
+
+            countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const difference = targetTime - now;
+
+                if (difference <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').innerHTML = "Time's up!";
+                    document.getElementById('message').innerHTML = "⏰ Alarm! Time is up!";
+                    alarmSound.play().catch(error => console.log("Audio play error: ", error));
+                    return;
+                }
+                
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
